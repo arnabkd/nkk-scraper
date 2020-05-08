@@ -1,0 +1,9 @@
+{
+  "automerge": true,
+  "branchPrefix": "renovate-",
+  "extends": [
+    "config:base"
+  ],
+  "masterIssue": true,
+  "stabilityDays": 3,
+}
