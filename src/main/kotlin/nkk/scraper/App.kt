@@ -4,14 +4,14 @@
 package nkk.scraper
 
 import org.jsoup.Jsoup
-import org.jsoup.select.Elements
-import kotlin.IllegalArgumentException
+import org.jsoup.nodes.Element
 
 const val goldenURL = "https://retrieverklubben.no/golden-retriever/oppdretterliste/"
 
 // CSS selectors
-val containerSelector = {it: Int -> "div:nth-child($it)"}
-fun getGetFylke(it: Elements): Fylke? {
+const val sectionSelector = "body > div.main_container > div.oppdretterliste_section"
+const val breederListClass = "oppdretterliste_post_container"
+fun getFylke(it: Element): Fylke? {
   val content = it.select("h5").first()
   return when (content) {
     null -> null
@@ -19,33 +19,45 @@ fun getGetFylke(it: Elements): Fylke? {
   }
 }
 
+fun getBreeders(element: Element, fylke: Fylke): List<Breeder> =
+  element
+    .select("div.oppdretterliste_box")
+    .map {row ->
+      row
+        .select("p > span")
+        .map { it.text().split(":") }
+        .filter { it.size == 2 }
+        .map { it[0] to it[1] }
+        .toBreeder(fylke)
+    }
 
-fun createBreederTable(url: String) {
-  val doc = Jsoup
+
+fun printBreederTable(url: String) {
+  val breeders = Jsoup
     .connect(url)
     .get()
-    .select("body > div.main_container > div")
+    .select(sectionSelector)
+    .asSequence()
     .map {
       it.children()
     }
     .first()
+    .asSequence()
+    .filter { it.hasClass(breederListClass) }
+    .map { fylkeHTML ->
+      val fylke = getFylke(fylkeHTML)
+      check(fylke != null)
+      getBreeders(fylkeHTML, fylke)
+    }
+    .flatten()
+    .sortedBy { it.fylke }
+    .toList()
+  breeders.writeToCSV("breeders.csv")
 
-
-  val relevantList = doc.mapIndexed {i, it ->
-    val fylkeIndex = i + 2
-    val fylkeHTML = doc.select(containerSelector(fylkeIndex))
-
-    // For each fylke
-    val fylkeName = getGetFylke(fylkeHTML)
-    val breeders = fylkeHTML.select("div.row.oppdretterliste_box")
-
-    fylkeName to breeders
-  }.filterNot {(fylke, _) -> fylke == null }
-  println(relevantList)
 }
 
 data class Breeder(
-  val fylke: String? = null,
+  val fylke: Fylke? = null,
   val name: String? = null,
   val kennelName: String? = null,
   val address: String? = null,
@@ -69,5 +81,5 @@ enum class Fylke(val fullName: String) {
 }
 
 fun main() {
-  createBreederTable(goldenURL)
+  printBreederTable(goldenURL)
 }
