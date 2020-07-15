@@ -17,10 +17,6 @@ module.exports =
   "prConcurrentLimit": 5,
   // Wait for builds to complete (successful or otherwise) before creating PRs
   "prCreation": "not-pending",
-  // Ensure that we have a list of PRs ready on Monday
-  "schedule": [
-    "every weekend", "after 5pm on Friday"
-  ],
   "stabilityDays": 10,
   "timezone": "Europe/Oslo"
 }
