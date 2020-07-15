@@ -1,0 +1,15 @@
+{
+  "automerge": false,
+  "branchPrefix": "renovate-",
+  "extends": [
+    "config:base"
+  ],
+  "major": {
+    "automerge": false
+  },
+  "masterIssue": true,
+  "prConcurrentLimit": 5,
+  "prCreation": "not-pending",
+  "stabilityDays": 10,
+  "timezone": "Europe/Oslo"
+}
