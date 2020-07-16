@@ -9,7 +9,6 @@
   },
   "masterIssue": true,
   "prConcurrentLimit": 5,
-  "prCreation": "not-pending",
   "stabilityDays": 10,
   "timezone": "Europe/Oslo"
 }
