@@ -27,4 +27,4 @@ jobs:
         renovate_key: ${{ secrets.renovatekey }}
       run: | 
         docker run --rm -e LOG_LEVEL=debug -e RENOVATE_TOKEN="$renovate_key" renovate/renovate arnabkd/nkk-scraper > debug.log
-        echo debug.log
+        echo "$(cat debug.log)"
