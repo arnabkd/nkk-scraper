@@ -6,7 +6,7 @@ name: Run renovate-docker script
 # events but only for the master branch
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '0 23 * * 6'
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -28,14 +28,3 @@ jobs:
       run: | 
         docker run --rm -e LOG_LEVEL=debug -e RENOVATE_TOKEN="$renovate_key" renovate/renovate arnabkd/nkk-scraper > debug.log
         echo "$(cat debug.log)"
-        
-    - name: Slack Notification
-      uses: rtCamp/action-slack-notify@master
-      env:
-        SLACK_CHANNEL: arnab-tester
-        SLACK_COLOR: '#3278BD'
-        SLACK_ICON: https://github.com/rtCamp.png?size=48
-        SLACK_MESSAGE: 'Post Content :rocket:'
-        SLACK_TITLE: Tester
-        SLACK_USERNAME: tff-renovatebot
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBURL }}
